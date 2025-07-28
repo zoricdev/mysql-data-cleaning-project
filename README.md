@@ -1,28 +1,52 @@
 # MySQL Data Cleaning Project
 
-This project focuses on cleaning and preparing a real-world dataset using MySQL. The dataset used (`world_layoffs.layoffs`) contains global layoff data and required multiple stages of cleaning to ensure quality and usability for future analysis.
+This project focuses on cleaning and preparing a dataset of global company layoffs using MySQL. The original data contained duplicates, inconsistent values, null fields, and irrelevant rows/columns. Through a series of SQL queries and best practices, the dataset was transformed into a clean, structured version ready for analysis.
 
-## Cleaning Steps Overview
+## Dataset
 
-The data cleaning process followed four key steps:
+The dataset comes from the `world_layoffs.layoffs` table and includes information such as company names, industries, layoff numbers, dates, funding, and more.
 
-1. **Remove Duplicates**  
-   - Identified duplicate rows using `ROW_NUMBER()` and `PARTITION BY`.
-   - Verified false positives (e.g. multiple entries for companies like *Oda* were legitimate).
-   - Deleted true duplicates using a `DELETE` with `ROW_NUMBER()` via CTE logic.
-   - Created a new table (`layoffs_staging2`) for cleaner control and tracking row numbers.
+## Cleaning Steps
 
-2. **Standardise the Data and Fix Errors**  
-   - Replaced blank fields in the `industry` column with `NULL`.
-   - Updated `NULL` industry values using matching rows from the same company.
-   - Standardised inconsistent labels (e.g. *"Crypto Currency"* → *"Crypto"*).
-   - Trimmed extra characters from `country` values (e.g. removed trailing periods).
-   - Converted the `date` column to `DATE` format using `STR_TO_DATE()` and modified the column type.
+The project was broken into four key stages:
 
-3. **Handle Null or Blank Values**  
-   - Chose to leave valid `NULL` values in fields like `total_laid_off`, `percentage_laid_off`, and `funds_raised_millions` for analytical flexibility.
-   - Deleted rows where both `total_laid_off` and `percentage_laid_off` were missing, as they added no value.
+### 1. Remove Duplicates
+- Used `ROW_NUMBER()` to identify exact duplicate records.
+- Validated that similar entries (e.g. "Oda") were not removed if they were legitimate.
+- Removed true duplicates using a CTE or temporary row number column.
+- Ensured only the first instance of each duplicate remained.
 
-4. **Remove Unnecessary Columns and Rows**  
-   - Dropped helper columns like `row_num` after cleaning.
-   - Removed records without essential data to ensure analytical quality.
+### 2. Standardise the Data and Fix Errors
+- Converted blank strings to `NULL` for consistency.
+- Populated missing `industry` fields using values from other matching rows.
+- Standardised variations (e.g. "Crypto Currency" → "Crypto").
+- Trimmed trailing characters from `country` names (e.g. "United States.").
+- Converted the `date` column to a proper `DATE` format using `STR_TO_DATE()`.
+
+### 3. Handle Null or Blank Values
+- Reviewed `NULL` values in key fields like `total_laid_off`, `percentage_laid_off`, and `funds_raised_millions`.
+- Left these as-is when appropriate to support accurate analysis (especially in EDA).
+
+### 4. Remove Unnecessary Columns and Rows
+- Removed rows where both `total_laid_off` and `percentage_laid_off` were `NULL`.
+- Dropped helper columns such as `row_num` used temporarily for deletion.
+
+## 💻 Technologies Used
+- MySQL
+- MySQL Workbench
+
+## Key SQL Concepts Applied
+- Common Table Expressions (CTEs)
+- `ROW_NUMBER()` window function
+- Conditional updates and joins
+- String manipulation and formatting
+- Data type conversion
+- Data validation and integrity checks
+
+## ✅ Outcome
+
+A clean and consistent version of the layoffs dataset (`layoffs_staging2`) was created. This dataset is now ready for further analysis, visualisation, or use in an EDA (Exploratory Data Analysis) pipeline.
+
+---
+
+> This project showcases strong SQL data cleaning practices and is a great foundation for any data analysis or business intelligence workflow.
